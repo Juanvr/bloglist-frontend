@@ -17,7 +17,7 @@ const Notification = ({ notification }) => {
         notificationStyle.color = '#50394c';
     }
 
-    if (notification.message === null) {
+    if (notification.message === null || notification.message === '' ) {
       return null
     }
   

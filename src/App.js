@@ -74,7 +74,10 @@ const App = () => {
   const notify = (message, error) =>{
     setErrorMessage({message, error})
     setTimeout(() => {
-      setErrorMessage('')
+      setErrorMessage({
+        "message": '',
+        "error": true
+      })
     }, 5000);
   }
 
@@ -115,7 +118,7 @@ const App = () => {
     return (
       <div>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} likeBlog = {likeBlog}/>
         )}
       </div>
     );
@@ -138,6 +141,19 @@ const App = () => {
     }
   };
 
+  const likeBlog = async (blog) => {
+
+    try {
+      console.log('BLOG', blog)
+      await blogService.update(blog.id, {...blog, 'likes': blog.likes + 1});
+
+      refreshBlogs();
+      notify('Added like to ' + blog.title + ' blog!', false);
+
+    } catch (exception) {
+      notify(exception.Message, true);
+    }
+  };
 
   return (
     <div>
