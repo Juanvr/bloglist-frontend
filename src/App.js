@@ -117,8 +117,8 @@ const App = () => {
   const blogList = () => {
     return (
       <div>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} likeBlog = {likeBlog}/>
+        {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+          <Blog key={blog.id} blog={blog} likeBlog = {likeBlog} deleteBlog = {deleteBlog}/>
         )}
       </div>
     );
@@ -144,7 +144,6 @@ const App = () => {
   const likeBlog = async (blog) => {
 
     try {
-      console.log('BLOG', blog)
       await blogService.update(blog.id, {...blog, 'likes': blog.likes + 1});
 
       refreshBlogs();
@@ -153,6 +152,22 @@ const App = () => {
     } catch (exception) {
       notify(exception.Message, true);
     }
+  };
+
+  const deleteBlog = async (blog) => {
+
+    if (window.confirm(`Delete blog ${blog.title}?`)) { 
+      try {
+        await blogService.deleteBlog(blog.id);
+  
+        refreshBlogs();
+        notify('Deleted blog ' + blog.title + '!', false);
+  
+      } catch (exception) {
+        notify(exception.Message, true);
+      }
+    }
+
   };
 
   return (
