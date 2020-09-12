@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
+
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -136,41 +139,6 @@ const App = () => {
   };
 
 
-  const blogForm = () => {
-
-
-    return <form onSubmit={addBlog}>
-      <div>
-        title
-          <input
-            type="text"
-            value={newBlog.title}
-            name="Title"
-            onChange={({ target }) => setNewBlog({ ...newBlog, 'title': target.value})}
-          />
-      </div>
-      <div>
-        author
-        <input
-          type="text"
-          value={newBlog.author}
-          name="Author"
-          onChange={({ target }) => setNewBlog({ ...newBlog, 'author': target.value})}
-        />
-      </div>
-      <div>
-        url
-        <input
-          type="text"
-          value={newBlog.url}
-          name="Url"
-          onChange={({ target }) => setNewBlog({ ...newBlog, 'url': target.value})}
-        />
-      </div>
-      <button type="submit">save</button>
-    </form>  
-  }
-
   return (
     <div>
       <h2>blogs</h2>
@@ -188,7 +156,10 @@ const App = () => {
           
           
           {blogList()}
-          {blogForm()}
+          {/* {blogForm()} */}
+            <Togglable buttonLabel='New Blog'>
+            <BlogForm addBlog = {addBlog} newBlog = {newBlog} setNewBlog = {setNewBlog}/>
+          </Togglable>
         </div>
       } 
 
