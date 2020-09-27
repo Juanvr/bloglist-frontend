@@ -15,6 +15,62 @@ describe('Blog app', function() {
         'password' : 'PasswordDePuma',
         'name' : 'El señor puma 2'
       })
+
+    cy.request('POST',
+      'http://localhost:3003/api/login',
+      {
+        'username': 'root',
+        'password': 'PasswordDePuma'
+      })
+      .then( function( response ) {
+        cy.request(
+          {
+            'method': 'POST',
+            'url' : 'http://localhost:3003/api/blogs',
+            'auth': {
+              'bearer': response.body.token
+            },
+            'body' : {
+              'title': 'Christmas',
+              'author': 'Santa',
+              'url': 'http://awesome.com',
+              'likes': 1
+            }
+          }
+        )
+        cy.request(
+          {
+            'method': 'POST',
+            'url' : 'http://localhost:3003/api/blogs',
+            'auth': {
+              'bearer': response.body.token
+            },
+            'body' : {
+              'title': 'Halloween',
+              'author': 'Santa Claws',
+              'url': 'http://awesome.com',
+              'likes': 5
+            }
+          }
+        )
+        cy.request(
+          {
+            'method': 'POST',
+            'url' : 'http://localhost:3003/api/blogs',
+            'auth': {
+              'bearer': response.body.token
+            },
+            'body' : {
+              'title': 'Hannukah',
+              'author': 'Armadillo',
+              'url': 'http://awesome.com',
+              'likes': 10
+            }
+          }
+        )
+
+      })
+
     cy.visit('http://localhost:3000')
   })
 
@@ -92,7 +148,7 @@ describe('Blog app', function() {
 
       cy.contains('show').click()
       cy.contains('delete').click()
-      
+
       cy.contains('El blog de caza').not()
 
     })
@@ -115,14 +171,25 @@ describe('Blog app', function() {
       cy.get('#login-button').click()
 
       cy.contains('El señor puma 2 logged-in')
-      
+
       cy.contains('El blog de caza')
 
       cy.contains('show').click()
       cy.contains('delete').click()
-      
+
       cy.contains('El blog de caza')
 
+    })
+
+    it.only('Blogs are ordered by likes', function() {
+      let likes = cy.get('.likes')
+      likes.should('have.length', 3)
+
+      cy.get('.likes')
+        .then($items => {
+          return $items.map((index, html) => Cypress.$(html).text()).get()
+        })
+        .should('deep.eq', ['10', '5', '1'])
     })
 
 
